@@ -55,16 +55,17 @@ server.get('/api/users/:id', (req, res) => {
 // information sent inside the request body
 server.post('/api/users', (req, res) => {
   const newUser = req.body
+  const { name, bio } = newUser
 
-  // Check if newUser name and bio are neither
-  // 'undefined' nor empty strings
+  // Check if newUser name and bio exist, are strings
+  // and have a length > 0
   if (
-    updatedUser.name &&
-    updatedUser.name.length > 0 &&
-    typeof updatedUser.name === 'string' &&
-    updatedUser.bio &&
-    updatedUser.bio.length > 0 &&
-    typeof updatedUser.bio === 'string'
+    name &&
+    name.length > 0 &&
+    typeof name === 'string' &&
+    bio &&
+    bio.length > 0 &&
+    typeof bio === 'string'
   ) {
     // If the newUser obj is valid, insert into
     // the database or catch error
@@ -96,8 +97,8 @@ server.put('/api/users/:id', (req, res) => {
   const updatedUser = req.body
   const { name, bio } = updatedUser
 
-  // Check if updatedUser name and bio are neither
-  // 'undefined' nor empty strings
+  // Check if updatedUser name and bio exist, are strings
+  // and have a length > 0
   if (
     name &&
     name.length > 0 &&

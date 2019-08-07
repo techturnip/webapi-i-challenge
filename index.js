@@ -25,7 +25,7 @@ server.get('/api/users', (req, res) => {
     })
     .catch(err => {
       res.status(500).json({
-        err: err,
+        err,
         errorMessage: 'The users information could not be retrieved.'
       })
     })
@@ -45,7 +45,7 @@ server.get('/api/users/:id', (req, res) => {
     })
     .catch(err => {
       res.status(500).json({
-        err: err,
+        err,
         errorMessage: 'The user information could not be retrieved.'
       })
     })
@@ -67,18 +67,62 @@ server.post('/api/users', (req, res) => {
     // If the newUser obj is valid, insert into
     // the database or catch error
     db.insert(newUser)
-      .then(createdUser => {
-        res.status(201).json(createdUser)
+      .then(user => {
+        res.status(201).json(user)
       })
       .catch(err => {
         res.status(500).json({
-          err: err,
+          err,
           errorMessage:
             'There was an error while saving the user to the database'
         })
       })
   } else {
     // If the newUser obj is invalid, respond with
+    // status 400 and errorMessage
+    res.status(400).json({
+      errorMessage: 'Please provide name and bio for the user.'
+    })
+  }
+})
+
+// PUT - '/api/users/:id' - Updates the user with the
+// specified id using data from the request body.
+// Returns the modified document, NOT the original.
+server.put('/api/users/:id', (req, res) => {
+  const { id } = req.params
+  const updatedUser = req.body
+
+  // Check if updatedUser name and bio are neither
+  // 'undefined' nor empty strings
+  if (
+    updatedUser.name &&
+    updatedUser.name.length > 0 &&
+    updatedUser.name !== null &&
+    typeof updatedUser.name === 'string' &&
+    updatedUser.bio &&
+    updatedUser.bio.length > 0 &&
+    updatedUser.bio !== null &&
+    typeof updatedUser.bio === 'string'
+  ) {
+    // If the updatedUser obj is valid, insert into
+    // the database or catch error
+    db.update(id, updatedUser)
+      .then(user => {
+        user
+          ? res.json(user)
+          : res.status(404).json({
+              message: 'The user with the specified ID does not exist.'
+            })
+      })
+      .catch(err => {
+        res.status(500).json({
+          err,
+          errorMessage: 'The user information could not be modified'
+        })
+      })
+  } else {
+    // If the updatedUser obj is invalid, respond with
     // status 400 and errorMessage
     res.status(400).json({
       errorMessage: 'Please provide name and bio for the user.'

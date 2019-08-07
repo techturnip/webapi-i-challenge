@@ -59,10 +59,12 @@ server.post('/api/users', (req, res) => {
   // Check if newUser name and bio are neither
   // 'undefined' nor empty strings
   if (
-    newUser.name &&
-    newUser.name !== '' &&
-    newUser.bio &&
-    newUser.bio !== ''
+    updatedUser.name &&
+    updatedUser.name.length > 0 &&
+    typeof updatedUser.name === 'string' &&
+    updatedUser.bio &&
+    updatedUser.bio.length > 0 &&
+    typeof updatedUser.bio === 'string'
   ) {
     // If the newUser obj is valid, insert into
     // the database or catch error
@@ -92,18 +94,17 @@ server.post('/api/users', (req, res) => {
 server.put('/api/users/:id', (req, res) => {
   const { id } = req.params
   const updatedUser = req.body
+  const { name, bio } = updatedUser
 
   // Check if updatedUser name and bio are neither
   // 'undefined' nor empty strings
   if (
-    updatedUser.name &&
-    updatedUser.name.length > 0 &&
-    updatedUser.name !== null &&
-    typeof updatedUser.name === 'string' &&
-    updatedUser.bio &&
-    updatedUser.bio.length > 0 &&
-    updatedUser.bio !== null &&
-    typeof updatedUser.bio === 'string'
+    name &&
+    name.length > 0 &&
+    typeof name === 'string' &&
+    bio &&
+    bio.length > 0 &&
+    typeof bio === 'string'
   ) {
     // If the updatedUser obj is valid, insert into
     // the database or catch error
@@ -128,6 +129,27 @@ server.put('/api/users/:id', (req, res) => {
       errorMessage: 'Please provide name and bio for the user.'
     })
   }
+})
+
+// DELETE - '/api/users/:id' - Removes the user with the
+// specified id and returns the deleted user.
+server.delete('/api/users/:id', (req, res) => {
+  const { id } = req.params
+
+  db.remove(id)
+    .then(deletedUser => {
+      console.log(deletedUser)
+      deletedUser
+        ? res.json(deletedUser)
+        : res.status(404).json({
+            message: 'The user with the specified ID does not exist.'
+          })
+    })
+    .catch(err => {
+      res
+        .status(500)
+        .json({ err, errorMessage: 'The user could not be removed' })
+    })
 })
 
 // LISTEN

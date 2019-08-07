@@ -26,7 +26,27 @@ server.get('/api/users', (req, res) => {
     .catch(err => {
       res.status(500).json({
         err: err,
-        message: 'Failed to get users'
+        errorMessage: 'The users information could not be retrieved.'
+      })
+    })
+})
+
+// GET - '/api/users/:id' - Returns an object with
+// the specified id
+server.get('/api/users/:id', (req, res) => {
+  const { id } = req.params
+  db.findById(id)
+    .then(user => {
+      user
+        ? res.json(user)
+        : res
+            .status(404)
+            .json({ message: 'The user with the specified ID does not exist.' })
+    })
+    .catch(err => {
+      res.status(500).json({
+        err: err,
+        errorMessage: 'The user information could not be retrieved.'
       })
     })
 })

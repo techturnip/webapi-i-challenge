@@ -1,8 +1,11 @@
-// implement your API here
+require('dotenv').config()
+
 const express = require('express')
 const db = require('./data/db.js')
 
 const server = express()
+
+const port = process.env.PORT || 4000
 
 // middleware
 server.use(express.json())
@@ -10,7 +13,6 @@ server.use(express.json())
 // ================================================|
 // REQUEST HANDLERS ===============================|
 // ================================================|
-
 // GET - '/' - Basic handle root url
 server.get('/', (req, res) => {
   res.send('This is the webapi-i-challenge api')
@@ -154,6 +156,6 @@ server.delete('/api/users/:id', (req, res) => {
 })
 
 // LISTEN
-server.listen(4000, () => {
-  console.log('Server is running on port 4000...')
+server.listen(port, () => {
+  console.log(`\n*** Server Running on Port ${port} **\n`)
 })
